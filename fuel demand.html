@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fuel Demand Form</title>
+  <link rel="stylesheet" href="signin.html">
+  <style>
+    .form-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    body{
+      background-color: lightblue;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Fuel Demand Form</h2>
+    <form id="fuel-demand-form" method="POST">
+      <label for="customer_name">Customer Name:</label>
+      <input type="text" id="customer_name" name="customer_name" required>
+
+      <label for="fuel_type">Fuel Type:</label>
+      <select id="fuel_type" name="fuel_type" required>
+        <option value="Gasoline">Gasoline</option>
+        <option value="Diesel">Diesel</option>
+        <option value="Petrol">Petrol</option>
+        <option value="Kerosene">Kerosene</option>
+      </select>
+
+      <label for="quantity">Quantity:</label>
+      <input type="text" id="quantity" name="quantity" required>
+
+      <label for="delivery_date">Delivery Date:</label>
+      <input type="date" id="delivery_date" name="delivery_date" required>
+
+      <label for="delivery_time">Delivery Time:</label>
+      <input type="time" id="delivery_time" name="delivery_time" required>
+
+      <input type="submit" value="Submit" name="submit_fuel">
+    </form>
+  </div>
+  <script>
+    document.getElementById("fuel-demand-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      var customerName = document.getElementById("customer_name").value;
+      var fuelType = document.getElementById("fuel_type").value;
+      var quantity = document.getElementById("quantity").value;
+      var deliveryDate = document.getElementById("delivery_date").value;
+      var deliveryTime = document.getElementById("delivery_time").value;
+
+      // Perform validation checks
+      if (!customerName || !fuelType || !quantity || !deliveryDate || !deliveryTime) {
+        alert("Please fill in all the fields.");
+        return;
+      }
+
+      // Send the form data to the server
+      var formData = new FormData();
+      formData.append("customer_name", customerName);
+      formData.append("fuel_type", fuelType);
+      formData.append("quantity", quantity);
+      formData.append("delivery_date", deliveryDate);
+      formData.append("delivery_time", deliveryTime);
+
+      fetch("process_demand.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        alert(result);
+        // Reset the form
+        document.getElementById("fuel-demand-form").reset();
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while submitting the form.");
+      });
+    });
+  </script>
+</body>
+</html>

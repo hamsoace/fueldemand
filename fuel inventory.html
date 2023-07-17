@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fuel Inventory Form</title>
+  <link rel="stylesheet" href="signin.html">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-image: url(images.jpeg);
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="number"],
+    select {
+      width: 200px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="submit"] {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fuel Inventory Form</h1>
+
+  <h2>Fuel Demanded</h2>
+  <form id="demand-form">
+    <label for="fuel-type">Fuel Type:</label>
+    <select id="fuel-type" required>
+      <option value="Petrol">Petrol</option>
+      <option value="Diesel">Diesel</option>
+      <option value="Gasoline">Gasoline</option>
+    </select><br><br>
+    <label for="demanded-amount">Amount of Fuel Demanded (litres):</label>
+    <input type="number" id="demanded-amount" min="1" required><br><br>
+    <input type="submit" value="Submit Demand">
+  </form>
+
+  <h2>Fuel Restocking</h2>
+  <form id="restock-form">
+    <label for="fuel-type-restock">Fuel Type:</label>
+    <select id="fuel-type-restock" required>
+      <option value="Petrol">Petrol</option>
+      <option value="Diesel">Diesel</option>
+      <option value="Gasoline">Gasoline</option>
+    </select><br><br>
+    <label for="restocked-amount">Amount of Fuel Restocked (litres):</label>
+    <input type="number" id="restocked-amount" step="any" required><br><br>
+    <input type="submit" value="Restock">
+  </form>
+
+  <h2>Fuel Inventory</h2>
+  <table id="fuel-inventory">
+    <thead>
+      <tr>
+        <th>Fuel Type</th>
+        <th>Quantity in Stock (litres)</th>
+        <th>Quantity on Demand (litres)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Petrol</td>
+        <td><span id="Petrol-stock">0</span></td>
+        <td><span id="Petrol-demand">0</span></td>
+      </tr>
+      <tr>
+        <td>Diesel</td>
+        <td><span id="Diesel-stock">0</span></td>
+        <td><span id="Diesel-demand">0</span></td>
+      </tr>
+      <tr>
+        <td>Gasoline</td>
+        <td><span id="Gasoline-stock">0</span></td>
+        <td><span id="Gasoline-demand">0</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function updateStock(fuelType, demandAmount) {
+      var stockAmount = document.getElementById(fuelType + "-stock");
+      var currentStock = parseInt(stockAmount.innerText);
+      var newStock = currentStock - demandAmount;
+      stockAmount.innerText = newStock;
+
+      var demandAmountSpan = document.getElementById(fuelType + "-demand");
+      var currentDemand = parseInt(demandAmountSpan.innerText);
+      var newDemand = currentDemand + demandAmount;
+      demandAmountSpan.innerText = newDemand;
+    }
+
+    document.getElementById("demand-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var fuelType = document.getElementById("fuel-type").value;
+      var demandAmount = parseInt(document.getElementById("demanded-amount").value);
+      updateStock(fuelType, demandAmount);
+      this.reset();
+
+      // Send the demand data to the server
+      var formData = new FormData();
+      formData.append("fuelType", fuelType);
+      formData.append("demandAmount", demandAmount);
+
+      fetch("update_demand.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.error("Error:", error));
+    });
+
+    document.getElementById("restock-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var fuelType = document.getElementById("fuel-type-restock").value;
+      var restockingAmount = parseInt(document.getElementById("restocked-amount").value);
+      var stockAmount = document.getElementById(fuelType + "-stock");
+      var currentStock = parseInt(stockAmount.innerText);
+      var newStock = currentStock + restockingAmount;
+      stockAmount.innerText = newStock;
+      this.reset();
+
+      // Send the restock data to the server
+      var formData = new FormData();
+      formData.append("fuelType", fuelType);
+      formData.append("restockingAmount", restockingAmount);
+
+      fetch("update_restock.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.error("Error:", error));
+    });
+  </script>
+</body>
+</html>
