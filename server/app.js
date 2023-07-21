@@ -119,8 +119,8 @@ app.post("/signup", async (req, res) => {
 // Fuel demand form route
 app.post("/fuelRestock", async (req, res) => {
   const { fuel_type_restock, restocked_amount } = req.body;
-  console.log("Received fuel_type_restock:", fuel_type_restock);
-  console.log("Received restocked_amount:", restocked_amount);
+  console.log("Received fuel_type_restock:", req.body);
+  console.log("Received restocked_amount:", req.body);
 
   try {
     // Convert the restocked_amount to a valid number

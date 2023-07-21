@@ -55,7 +55,7 @@
   <body>
     <div class="form-container">
       <h2>Fuel Demand Form</h2>
-      <form id="fuel-demand-form" action="/submitFuelDemand" method="POST">
+      <form id="fuel-demand-form" action="/fuelRestock" method="POST">
         <label for="customer_name">Customer Name:</label>
         <input type="text" id="customer_name" name="customer_name" required />
 
@@ -67,8 +67,13 @@
           <option value="Kerosene">Kerosene</option>
         </select>
 
-        <label for="quantity">Quantity:</label>
-        <input type="text" id="quantity" name="quantity" required />
+        <label for="restocked_amount">Restocked Amount:</label>
+        <input
+          type="text"
+          id="restocked_amount"
+          name="restocked_amount"
+          required
+        />
 
         <label for="delivery_date">Delivery Date:</label>
         <input type="date" id="delivery_date" name="delivery_date" required />
@@ -85,23 +90,30 @@
         .addEventListener("submit", async function (event) {
           event.preventDefault();
 
-          var customerName = document.getElementById("customer_name").value;
-          var fuelType = document.getElementById("fuel_type").value;
-          var quantity = document.getElementById("quantity").value;
-          var deliveryDate = document.getElementById("delivery_date").value;
-          var deliveryTime = document.getElementById("delivery_time").value;
+          const customerName = document.getElementById("customer_name").value;
+          const fuelTypeRestock = document.getElementById("fuel_type").value;
+          const restockedAmount = document.getElementById("restocked_amount").value;
+          const deliveryDate = document.getElementById("delivery_date").value;
+          const deliveryTime = document.getElementById("delivery_time").value;
 
           // Perform validation checks
           if (
             !customerName ||
-            !fuelType ||
-            !quantity ||
+            !fuelTypeRestock ||
+            !restockedAmount ||
             !deliveryDate ||
             !deliveryTime
           ) {
             alert("Please fill in all the fields.");
             return;
           }
+
+          const formData = new URLSearchParams();
+          formData.append("customer_name", customerName);
+          formData.append("fuel_type_restock", fuelTypeRestock);
+          formData.append("restocked_amount", restockedAmount);
+          formData.append("delivery_date", deliveryDate);
+          formData.append("delivery_time", deliveryTime);
 
           try {
             // Send the form data to the server using fetch and a POST request
@@ -110,13 +122,7 @@
               headers: {
                 "Content-Type": "application/json", // Assuming the server expects JSON data
               },
-              body: JSON.stringify({
-                customer_name: customerName,
-                fuel_type: fuelType,
-                restocked_amount: quantity,
-                delivery_date: deliveryDate,
-                delivery_time: deliveryTime,
-              }),
+              body: formData,
             });
 
             if (response.ok) {
