@@ -116,7 +116,7 @@ app.post("/fuelRestock", async (req, res) => {
   const { fuel_type_restock, restocked_amount } = req.body;
   console.log("Received fuel_type_restock:", fuel_type_restock);
   console.log("Received restocked_amount:", restocked_amount);
-  
+
   try {
     // Convert the restocked_amount to a valid number
     const restockedAmount = parseInt(restocked_amount);
