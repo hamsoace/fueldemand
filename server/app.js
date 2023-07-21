@@ -20,6 +20,11 @@ const DATABASE_NAME = "test"; // Replace with your database name
 mongoose.connect(`${MONGO_URI}/${DATABASE_NAME}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  writeConcern: {
+    w: "majority",
+    j: true,
+    wtimeout: 1000,
+  },
 });
 
 const db = mongoose.connection;
