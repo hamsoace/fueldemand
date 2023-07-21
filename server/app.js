@@ -1,16 +1,17 @@
-// app.js
 const express = require("express");
 const bodyParser = require("body-parser");
 const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 const User = require("./models/user");
+const FuelDemand = require("./models/fuelDemand"); // Import the FuelDemand model
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
-const MONGO_URI = "mongodb://localhost:27017"; // Replace with your MongoDB connection string
-const DATABASE_NAME = "fuel_demand_system"; // Replace with your database name
+const MONGO_URI =
+  "mongodb+srv://hamsoace:Sumeshu1@cluster0.atkvpq7.mongodb.net/?retryWrites=true&w=majority";
+const DATABASE_NAME = "test"; // Replace with your database name
 
 // MongoDB connection using Mongoose
 mongoose.connect(`${MONGO_URI}/${DATABASE_NAME}`, {
@@ -22,6 +23,10 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 db.once("open", () => {
   console.log("Connected to MongoDB database");
+});
+
+app.get("/", (req, res) => {
+  res.send("Welcome to the Fuel Inventory System!"); // You can customize the message here
 });
 
 // Login route
@@ -47,7 +52,7 @@ app.post("/login", async (req, res) => {
 
 // Signup route
 app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password } = req.query; // Use req.query to read query parameters
 
   try {
     // Check if the user already exists in the database
