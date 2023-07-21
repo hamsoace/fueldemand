@@ -76,16 +76,16 @@
   <form id="signUpForm" action="/signup" onsubmit="signUp(event)" method="POST">
     <h2>Sign Up</h2>
     <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
-    <input type="text" id="username" placeholder="username" required>
+    <input type="text" id="username" name="username" required>
 
     <label for="email"><i class="fa-solid fa-envelope"></i> Email:</label>
-    <input type="text" id="email" placeholder="email" required>
+    <input type="text" id="email" name="email" required>
 
     <label for="password"><i class="fa-solid fa-lock"></i> Password:</label>
-    <input type="password" id="password" placeholder="password" required><br><br>
+    <input type="password" id="password" name="password" required><br><br>
 
     <input type="submit" value="Sign Up">
-    <p>Already have an account? <a href="signin.html">Log In</a></p>
+    <p>Already have an account? <a href="index.html">Log In</a></p>
   </form>
 
   <script>
@@ -99,14 +99,14 @@
         const response = await fetch('/signup', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
           body: JSON.stringify({ username, email, password }),
         });
 
         if (response.ok) {
           alert('Account created successfully! Please log in.');
-          window.location.href = "signin.html";
+          window.location.href = "index.html";
         } else {
           const errorMessage = await response.text();
           alert(errorMessage);

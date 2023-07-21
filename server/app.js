@@ -4,13 +4,15 @@ const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 const User = require("./models/user");
 const FuelDemand = require("./models/fuelDemand"); // Import the FuelDemand model
+const cors = require("cors"); // Import the cors middleware
 
 const app = express();
+app.use(cors({ origin: "http://127.0.0.1:5500", }));// Use the cors middleware to allow all origins
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
-const MONGO_URI =
-  "mongodb+srv://hamsoace:Sumeshu1@cluster0.atkvpq7.mongodb.net/?retryWrites=true&w=majority";
+const MONGO_URI = "mongodb+srv://hamsoace:Sumeshu1@cluster0.atkvpq7.mongodb.net/?retryWrites=true&w=majority";
 const DATABASE_NAME = "test"; // Replace with your database name
 
 // MongoDB connection using Mongoose
@@ -52,7 +54,7 @@ app.post("/login", async (req, res) => {
 
 // Signup route
 app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.query; // Use req.query to read query parameters
+  const { username, email, password } = req.body; // Use req.query to read query parameters
 
   try {
     // Check if the user already exists in the database
