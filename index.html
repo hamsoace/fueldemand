@@ -73,7 +73,7 @@
   <h1>ON-ROAD FUEL DEMAND SYSTEM</h1>
 
   <!-- Sign In Form -->
-  <form id="signInForm" action="#" onsubmit="login(event)" method="POST">
+  <form id="signInForm" action="/login" onsubmit="login(event)" method="POST">
     <h2>Sign In</h2>
     <label for="usernameOrEmail"><i class="fa-solid fa-user"></i> Username or Email:</label>
     <input type="text" id="usernameOrEmail" placeholder="username or email" required>
@@ -93,18 +93,32 @@
   </form>
 
   <script>
-    function login(event) {
+    async function login(event) {
       event.preventDefault();
       var usernameOrEmail = document.getElementById("usernameOrEmail").value;
       var password = document.getElementById("password").value;
-
-      // Perform client-side login validation
-      if (usernameOrEmail === "Admin" && password === "Admin12345") {
-        window.location.href = "fuel demand.html";
-      } else {
-        alert("Invalid username or password. Please try again.");
+  
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `usernameOrEmail=${encodeURIComponent(usernameOrEmail)}&password=${encodeURIComponent(password)}`,
+        });
+  
+        if (response.ok) {
+          window.location.href = "fuel_demand.html";
+        } else {
+          const errorMessage = await response.text();
+          alert(errorMessage);
+        }
+      } catch (error) {
+        console.error('Error occurred during login:', error);
+        alert('An error occurred during login. Please try again later.');
       }
     }
   </script>
+  
 </body>
 </html>

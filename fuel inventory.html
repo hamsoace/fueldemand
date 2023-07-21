@@ -133,19 +133,40 @@
     </table>
 
     <script>
-      function updateStock(fuelType, demandAmount) {
-        var stockAmount = document.getElementById(fuelType + "-stock");
-        var currentStock = parseInt(stockAmount.innerText);
-        var newStock = currentStock - demandAmount;
-        stockAmount.innerText = newStock;
+      // Function to handle fuel restock form submission
+  async function restock(event) {
+    event.preventDefault();
+    const fuelTypeRestock = document.getElementById('fuel-type-restock').value;
+    const restockedAmount = document.getElementById('restocked-amount').value;
 
-        var demandAmountSpan = document.getElementById(fuelType + "-demand");
-        var currentDemand = parseInt(demandAmountSpan.innerText);
-        var newDemand = currentDemand + demandAmount;
-        demandAmountSpan.innerText = newDemand;
+    try {
+      const response = await fetch('/fuelRestock', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `fuel_type_restock=${encodeURIComponent(fuelTypeRestock)}&restocked_amount=${encodeURIComponent(
+          restockedAmount
+        )}`,
+      });
+
+      if (response.ok) {
+        alert('Fuel restocked successfully!');
+        window.location.reload(); // Reload the page to update the fuel inventory tables
+      } else {
+        const errorMessage = await response.text();
+        alert(errorMessage);
       }
+    } catch (error) {
+      console.error('Error occurred during fuel restock:', error);
+      alert('An error occurred during fuel restock. Please try again later.');
+    }
+  }
 
-      document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById('restock-form').addEventListener('submit', restock);
+
+  // Function to update fuel inventory tables with demand data
+
         // Function to update fuel inventory tables with demand data
         function updateFuelInventoryTables() {
           var params = new URLSearchParams(window.location.search);
@@ -170,7 +191,6 @@
 
         // Call the function to update the tables when the page loads
         updateFuelInventoryTables();
-      });
     </script>
   </body>
 </html>
