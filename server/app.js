@@ -5,14 +5,15 @@ const mongoose = require("mongoose");
 const User = require("./models/user");
 const FuelDemand = require("./models/fuelDemand"); // Import the FuelDemand model
 const cors = require("cors"); // Import the cors middleware
+const path = require("path"); // Import the path module
 
 const app = express();
-app.use(cors({ origin: "http://127.0.0.1:5500", }));// Use the cors middleware to allow all origins
+app.use(cors({ origin: "http://127.0.0.1:5500" }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.resolve(__dirname, "public")));
 
-const MONGO_URI = "mongodb+srv://hamsoace:Sumeshu1@cluster0.atkvpq7.mongodb.net/?retryWrites=true&w=majority";
+const MONGO_URI = "mongodb+srv://hamsoace:Sumeshu1@cluster0.atkvpq7.mongodb.net/test?retryWrites=true&w=majority";
 const DATABASE_NAME = "test"; // Replace with your database name
 
 // MongoDB connection using Mongoose
@@ -30,6 +31,43 @@ db.once("open", () => {
 app.get("/", (req, res) => {
   res.send("Welcome to the Fuel Inventory System!"); // You can customize the message here
 });
+
+app.get('/fuel_demand.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../fuel_demand.html'));
+});
+
+// Route to handle form submission
+app.post("/submitFuelDemand", async (req, res) => {
+  const {
+    customer_name,
+    fuel_type,
+    quantity,
+    delivery_date,
+    delivery_time,
+  } = req.body;
+
+  try {
+    // Create a new FuelDemand document in the database
+    await FuelDemand.create({
+      customer_name,
+      fuel_type,
+      quantity,
+      delivery_date,
+      delivery_time,
+    });
+
+    res.status(200).send("Fuel Demand submitted successfully!");
+  } catch (error) {
+    console.error("Error occurred during fuel demand submission:", error);
+    res
+      .status(500)
+      .send(
+        "An error occurred during fuel demand submission. Please try again later."
+      );
+  }
+});
+
+  
 
 // Login route
 app.post("/login", async (req, res) => {
@@ -76,15 +114,26 @@ app.post("/signup", async (req, res) => {
 // Fuel demand form route
 app.post("/fuelRestock", async (req, res) => {
   const { fuel_type_restock, restocked_amount } = req.body;
-
+  console.log("Received fuel_type_restock:", fuel_type_restock);
+  console.log("Received restocked_amount:", restocked_amount);
+  
   try {
+    // Convert the restocked_amount to a valid number
+    const restockedAmount = parseInt(restocked_amount);
+
+    // Check if restockedAmount is a valid number
+    if (isNaN(restockedAmount) || restockedAmount <= 0) {
+      res.status(400).send("Invalid restocked amount. Please provide a valid number.");
+      return;
+    }
+
     // Update the fuel inventory in the database
     const fuelDemand = await FuelDemand.findOne({
       fuel_type: fuel_type_restock,
     }).sort({ delivery_date: "asc" });
     const currentStock = fuelDemand ? fuelDemand.current_stock : 0;
 
-    const newStock = currentStock + parseInt(restocked_amount);
+    const newStock = currentStock + restockedAmount;
 
     await FuelDemand.updateOne(
       { fuel_type: fuel_type_restock },
@@ -94,11 +143,10 @@ app.post("/fuelRestock", async (req, res) => {
     res.status(200).send("Fuel restocked successfully!");
   } catch (error) {
     console.error("Error occurred during fuel restock:", error);
-    res
-      .status(500)
-      .send("An error occurred during fuel restock. Please try again later.");
+    res.status(500).send("An error occurred during fuel restock. Please try again later.");
   }
 });
+
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");

@@ -1,124 +1,141 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Sign Up</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-image: url(background.jpeg);
-      background-repeat: no-repeat;
-      background-size: cover;
-      padding: 20px;
-    }
-    h1 {
-      color: #f1f1f1;
-    }
-    h2 {
-      color: #333333;
-    }
-    form {
-      max-width: 400px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-      color: #333;
-    }
-    input[type="text"],
-    input[type="password"] {
-      width: 70%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #16aaaf;
-    }
-    input[type="submit"] {
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-    }
-    input[type="submit"]:hover {
-      background-color: #45a049;
-    }
-    p {
-      margin-top: 10px;
-      color: blue;
-    }
-    a {
-      color: #4CAF50;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .form-container {
-      display: flex;
-      justify-content: space-between;
-    }
-    .form-container form {
-      width: 48%;
-    }
-  </style>
-</head>
-<body>
-  <h1>ON-ROAD FUEL DEMAND SYSTEM</h1>
-
-  <!-- Sign Up Form -->
-  <form id="signUpForm" action="/signup" onsubmit="signUp(event)" method="POST">
-    <h2>Sign Up</h2>
-    <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
-    <input type="text" id="username" name="username" required>
-
-    <label for="email"><i class="fa-solid fa-envelope"></i> Email:</label>
-    <input type="text" id="email" name="email" required>
-
-    <label for="password"><i class="fa-solid fa-lock"></i> Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
-
-    <input type="submit" value="Sign Up">
-    <p>Already have an account? <a href="index.html">Log In</a></p>
-  </form>
-
-  <script>
-    async function signUp(event) {
-      event.preventDefault();
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        const response = await fetch('/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: JSON.stringify({ username, email, password }),
-        });
-
-        if (response.ok) {
-          alert('Account created successfully! Please log in.');
-          window.location.href = "index.html";
-        } else {
-          const errorMessage = await response.text();
-          alert(errorMessage);
-        }
-      } catch (error) {
-        console.error('Error occurred during sign up:', error);
-        alert('An error occurred during sign up. Please try again later.');
+  <head>
+    <title>Sign Up</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: url(background.jpeg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        padding: 20px;
       }
-    }
+      h1 {
+        color: #f1f1f1;
+      }
+      h2 {
+        color: #333333;
+      }
+      form {
+        max-width: 400px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 70%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #16aaaf;
+      }
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      p {
+        margin-top: 10px;
+        color: blue;
+      }
+      a {
+        color: #4caf50;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .form-container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .form-container form {
+        width: 48%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ON-ROAD FUEL DEMAND SYSTEM</h1>
 
-    document.getElementById("signUpForm").addEventListener("submit", signUp);
-  </script>
-  
-</body>
+    <!-- Sign Up Form -->
+    <form
+      id="signUpForm"
+      action="/signup"
+      onsubmit="signUp(event)"
+      method="POST"
+    >
+      <h2>Sign Up</h2>
+      <label for="username"><i class="fa-solid fa-user"></i> Username:</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="email"><i class="fa-solid fa-envelope"></i> Email:</label>
+      <input type="text" id="email" name="email" required />
+
+      <label for="password"><i class="fa-solid fa-lock"></i> Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+      /><br /><br />
+
+      <input type="submit" value="Sign Up" />
+      <p>Already have an account? <a href="index.html">Log In</a></p>
+    </form>
+
+    <script>
+      async function signUp(event) {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const formData = new URLSearchParams();
+        formData.append("username", username);
+        formData.append("email", email);
+        formData.append("password", password);
+
+        try {
+          const response = await fetch("http://localhost:3000/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData,
+          });
+
+          if (response.ok) {
+            alert("Account created successfully! Please log in.");
+            window.location.href = "index.html";
+          } else {
+            const errorMessage = await response.text();
+            alert(errorMessage);
+          }
+        } catch (error) {
+          console.error("Error occurred during sign up:", error);
+          alert("An error occurred during sign up. Please try again later.");
+        }
+      }
+
+      document.getElementById("signUpForm").addEventListener("submit", signUp);
+    </script>
+  </body>
 </html>

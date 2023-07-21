@@ -28,7 +28,8 @@
 
       input[type="text"],
       input[type="date"],
-      input[type="time"] {
+      input[type="time"],
+      select {
         width: 100%;
         padding: 8px;
         margin-bottom: 15px;
@@ -54,7 +55,7 @@
   <body>
     <div class="form-container">
       <h2>Fuel Demand Form</h2>
-      <form id="fuel-demand-form" method="POST" onsubmit="inventory(event)">
+      <form id="fuel-demand-form" action="/submitFuelDemand" method="POST">
         <label for="customer_name">Customer Name:</label>
         <input type="text" id="customer_name" name="customer_name" required />
 
@@ -81,7 +82,7 @@
     <script>
       document
         .getElementById("fuel-demand-form")
-        .addEventListener("submit", function (event) {
+        .addEventListener("submit", async function (event) {
           event.preventDefault();
 
           var customerName = document.getElementById("customer_name").value;
@@ -102,19 +103,42 @@
             return;
           }
 
-          // Send the form data to the server
-          var formData = new FormData();
-          formData.append("customer_name", customerName);
-          formData.append("fuel_type", fuelType);
-          formData.append("quantity", quantity);
-          formData.append("delivery_date", deliveryDate);
-          formData.append("delivery_time", deliveryTime);
+          try {
+            // Send the form data to the server using fetch and a POST request
+            const response = await fetch("http://localhost:3000/fuelRestock", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json", // Assuming the server expects JSON data
+              },
+              body: JSON.stringify({
+                customer_name: customerName,
+                fuel_type: fuelType,
+                restocked_amount: quantity,
+                delivery_date: deliveryDate,
+                delivery_time: deliveryTime,
+              }),
+            });
 
-          // Create a URL parameter string with the form data
-          var urlParams = new URLSearchParams(formData);
-
-          // Redirect to the fuel_inventory.html page with the URL parameters
-          window.location.href = "fuel inventory.html?" + urlParams.toString();
+            if (response.ok) {
+              // The server successfully processed the fuel demand submission
+              // You can redirect to a success page or show a success message here
+              window.location.href = "fuel_inventory.html";
+            } else {
+              // Handle error responses from the server
+              const errorMessage = await response.text();
+              alert(
+                `Error occurred during fuel demand submission: ${errorMessage}`
+              );
+            }
+          } catch (error) {
+            console.error(
+              "Error occurred during fuel demand submission:",
+              error
+            );
+            alert(
+              "An error occurred during fuel demand submission. Please try again later."
+            );
+          }
         });
     </script>
   </body>
